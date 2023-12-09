@@ -22,12 +22,19 @@ def extrapolate(seq):
 
     for i in range(len(seqs) - 1):
         seqs[i+1].append(seqs[i][-1] + seqs[i+1][-1])
+        seqs[i+1].insert(0, seqs[i+1][0] - seqs[i][0])
 
-    return seqs[-1][-1]
+    return seqs[-1][0], seqs[-1][-1]
 
 def add_histories(seqs):
-    return sum(extrapolate(s) for s in seqs)
+    p1 = 0
+    p2 = 0
+    for s in seqs:
+        a, b = extrapolate(s)
+        p2 += a
+        p1 += b
+    return p1, p2
 
 if __name__ == '__main__':
     sequences = parse('input/input9.txt')
-    print(add_histories(sequences))
+    [print(s) for s in add_histories(sequences)]
