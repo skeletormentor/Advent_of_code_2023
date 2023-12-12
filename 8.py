@@ -3,6 +3,7 @@ import re
 from collections import namedtuple
 from itertools import cycle
 
+
 def parse(filename):
     lines = read_file(filename)
 
@@ -27,6 +28,7 @@ def count_steps(instructions, graph):
         i = (i + 1) % len(instructions)
     return counter
 
+
 def count_steps2(instructions, graph):
     direction = cycle(instructions)
     counter = 0
@@ -38,6 +40,7 @@ def count_steps2(instructions, graph):
         if counter % 1000000 == 0:
             print(counter)
     return counter
+
 
 if __name__ == '__main__':
     instructions, graph = parse('input/input8.txt')

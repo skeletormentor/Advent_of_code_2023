@@ -4,8 +4,9 @@ from functools import cmp_to_key
 
 lines = read_file('input/input7.txt')
 
-card = {'A': 14, 'K': 13, 'Q': 12, 'J': 11, 'T': 10, '9': 9, 
+card = {'A': 14, 'K': 13, 'Q': 12, 'J': 11, 'T': 10, '9': 9,
         '8': 8, '7': 7, '6': 6, '5': 5, '4': 4, '3': 3, '2': 2}
+
 
 def rank(cards):
     values = sorted(Counter(cards).values())
@@ -23,7 +24,8 @@ def rank(cards):
         return 1
     else:
         return 0
-    
+
+
 def compare(card1, card2):
     if card1 == card2:
         return 0
@@ -34,6 +36,7 @@ def compare(card1, card2):
             return 1
         else:
             return -1
+
 
 cards = defaultdict(list)
 sorted_cards = []

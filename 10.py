@@ -3,13 +3,14 @@ from collections import defaultdict, deque
 
 lines = read_file('input/input10.txt')
 
+
 def adjacent_coordinates(coord, char, up, down, left, right):
     x, y = coord
-    up = [up, (x, y-1)]
-    down = [down, (x, y+1)]
-    left = [left, (x-1, y)]
-    right = [right, (x+1, y)]
-    
+    up = [up, (x, y - 1)]
+    down = [down, (x, y + 1)]
+    left = [left, (x - 1, y)]
+    right = [right, (x + 1, y)]
+
     dir = []
     match char:
         case '|':
@@ -44,6 +45,7 @@ def adjacent_coordinates(coord, char, up, down, left, right):
                 dir.append(right[1])
     return dir
 
+
 def bfs(start):
     queue = deque([start])
     dist[start] = 0
@@ -55,6 +57,7 @@ def bfs(start):
             queue.append(neighbor)
             visited[neighbor] = True
             dist[neighbor] = dist[node] + 1
+
 
 size = (len(lines), len(lines[0]))
 
@@ -69,13 +72,13 @@ for y, row in enumerate(lines):
             char = '|'
         up, down, left, right = ['.', '.', '.', '.']
         if x != 0:
-            left = lines[y][x-1]
+            left = lines[y][x - 1]
         if x != size[0] - 1:
-            right = lines[y][x+1]
+            right = lines[y][x + 1]
         if y != 0:
-            up = lines[y-1][x]
+            up = lines[y - 1][x]
         if y != size[1] - 1:
-            down = lines[y+1][x]
+            down = lines[y + 1][x]
         neighbors = adjacent_coordinates((x, y), char, up, down, left, right)
         if neighbors:
             visited[(x, y)] = False

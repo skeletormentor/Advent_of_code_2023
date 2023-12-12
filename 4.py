@@ -23,7 +23,7 @@ def traverse(wins):
     for i, win in enumerate(wins):
         for j in range(win):
             for _ in range(cards[i]):
-                cards[i+j+1] += 1
+                cards[i + j + 1] += 1
     return sum(cards)
 
 

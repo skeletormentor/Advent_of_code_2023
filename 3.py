@@ -27,7 +27,7 @@ def parse(filename):
             char = lines[y][x]
             if char != '.' and not char.isdigit():
                 if char == '*':
-                    gears.append(item('*', x, x+1, y))
+                    gears.append(item('*', x, x + 1, y))
                 symbols.append((x, y))
     return symbols, gears, items, (xs, ys)
 
@@ -36,7 +36,7 @@ def get_surrounding_coords(item, size_of_table):
     max_x, max_y = size_of_table
     border = []
     # top and bottom
-    for j in [item.y-1, item.y+1]:
+    for j in [item.y - 1, item.y + 1]:
         for i in range(item.x1 - 1, item.x2 + 1):
             if (0 <= i <= max_x - 1) and (0 <= j <= max_y - 1):
                 border.append((i, j))
