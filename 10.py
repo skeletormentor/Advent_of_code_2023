@@ -1,52 +1,40 @@
-from common import read_file
 from collections import defaultdict, deque
 
-lines = read_file('input/input10.txt')
+from common import read_file
 
 
-def adjacent_coordinates(coord, char, up, down, left, right):
+def adjacent_coordinates(coord, current_char, up_char, down_char, left_char, right_char):
+    def check_dir(directions, dir_str):
+        map_directions = {'up': '|7F', 'down': '|LJ', 'left': '-LF', 'right': '-J7'}
+        valid_directions = []
+        for direction, s in zip(directions, dir_str):
+            if direction[0] in map_directions[s]:
+                valid_directions.append(direction[1])
+        return valid_directions
+
     x, y = coord
-    up = [up, (x, y - 1)]
-    down = [down, (x, y + 1)]
-    left = [left, (x - 1, y)]
-    right = [right, (x + 1, y)]
+    up_char = [up_char, (x, y - 1)]
+    down_char = [down_char, (x, y + 1)]
+    left_char = [left_char, (x - 1, y)]
+    right_char = [right_char, (x + 1, y)]
 
-    dir = []
-    match char:
+    match current_char:
         case '|':
-            if up[0] in '|7F':
-                dir.append(up[1])
-            if down[0] in '|LJ':
-                dir.append(down[1])
+            return check_dir([up_char, down_char], ['up', 'down'])
         case '-':
-            if left[0] in '-LF':
-                dir.append(left[1])
-            if right[0] in '-J7':
-                dir.append(right[1])
+            return check_dir([left_char, right_char], ['left', 'right'])
         case 'L':
-            if up[0] in '|7F':
-                dir.append(up[1])
-            if right[0] in '-J7':
-                dir.append(right[1])
+            return check_dir([up_char, right_char], ['up', 'right'])
         case 'J':
-            if up[0] in '|7F':
-                dir.append(up[1])
-            if left[0] in '-LF':
-                dir.append(left[1])
+            return check_dir([up_char, left_char], ['up', 'left'])
         case '7':
-            if down[0] in '|LJ':
-                dir.append(down[1])
-            if left[0] in '-LF':
-                dir.append(left[1])
+            return check_dir([down_char, left_char], ['down', 'left'])
         case 'F':
-            if down[0] in '|LJ':
-                dir.append(down[1])
-            if right[0] in '-J7':
-                dir.append(right[1])
-    return dir
+            return check_dir([down_char, right_char], ['down', 'right'])
 
 
 def bfs(start):
+    global g, dist, visited
     queue = deque([start])
     dist[start] = 0
     while len(queue) != 0:
@@ -59,45 +47,51 @@ def bfs(start):
             dist[neighbor] = dist[node] + 1
 
 
-size = (len(lines), len(lines[0]))
+def generate_graph(lines, start_char='|'):
+    global size
+    graph = defaultdict(set)
+    _visited = {}
+    _dist = {}
+    start = (0, 0)
+    for y, row in enumerate(lines):
+        for x, char in enumerate(row):
+            if char == 'S':
+                start = (x, y)
+                char = start_char
+            up, down, left, right = '.', '.', '.', '.'
+            if x != 0:
+                left = lines[y][x - 1]
+            if x != size[0] - 1:
+                right = lines[y][x + 1]
+            if y != 0:
+                up = lines[y - 1][x]
+            if y != size[1] - 1:
+                down = lines[y + 1][x]
+            neighbors = adjacent_coordinates((x, y), char, up, down, left, right)
+            if neighbors:
+                _visited[(x, y)] = False
+                _dist[(x, y)] = 0
+                graph[(x, y)].update(neighbors)
+                for neighbor in neighbors:
+                    graph[neighbor].add((x, y))
+    return graph, _visited, _dist, start
 
-g = defaultdict(set)
-visited = {}
-dist = {}
-S = (0, 0)
-for y, row in enumerate(lines):
-    for x, char in enumerate(row):
-        if char == 'S':
-            S = (x, y)
-            char = '|'
-        up, down, left, right = ['.', '.', '.', '.']
-        if x != 0:
-            left = lines[y][x - 1]
-        if x != size[0] - 1:
-            right = lines[y][x + 1]
-        if y != 0:
-            up = lines[y - 1][x]
-        if y != size[1] - 1:
-            down = lines[y + 1][x]
-        neighbors = adjacent_coordinates((x, y), char, up, down, left, right)
-        if neighbors:
-            visited[(x, y)] = False
-            dist[(x, y)] = 0
-            g[(x, y)].update(neighbors)
-            for neighbor in neighbors:
-                g[neighbor].add((x, y))
 
-bfs(S)
-largest = 0
-mapper = {'-': '─', '|': '│', '7': '┐', 'L': '└', 'F': '┌', 'J': '┘', 'S': '│'}
-for y in range(size[1]):
-    for x in range(size[0]):
-        if (x, y) in dist.keys() and dist[(x, y)] > 0:
-            char = lines[y][x]
-            c = mapper[char]
-            largest = max(largest, dist[(x, y)])
-            print(c, end='')
-        else:
-            print('█', end='')
-    print()
-print(largest)
+def get_largest(_dist):
+    global size
+    largest = 0
+    for y in range(size[1]):
+        for x in range(size[0]):
+            if (x, y) in _dist.keys() and _dist[(x, y)] > 0:
+                largest = max(largest, _dist[(x, y)])
+    return largest
+
+
+if __name__ == '__main__':
+    _lines = read_file('input/input10.txt')
+    size = len(_lines), len(_lines[0])
+    g, visited, dist, S = generate_graph(_lines)
+
+    bfs(S)
+
+    print(get_largest(dist))
