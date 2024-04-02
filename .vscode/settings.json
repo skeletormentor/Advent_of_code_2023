@@ -1,3 +1,9 @@
 {
+<<<<<<< HEAD
     "julia.environmentPath": "c:\\Users\\vanarinova\\Advent_of_code_2023"
+=======
+    "rust-analyzer.linkedProjects": [
+        ".\\rust_aoc\\day01\\Cargo.toml"
+    ]
+>>>>>>> 220ee7cfc4070eefc22c32fc4d5dcd92e648aaa5
 }
