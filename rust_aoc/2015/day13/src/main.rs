@@ -1,22 +1,20 @@
 use itertools::Itertools;
 use std::collections::{HashMap, HashSet};
 
-fn count_happiness(names: &Vec<&str>, pairs: &HashMap<(&str, &str), i16>) -> i16 {
-    let mut happiness = 0;
-    let len = names.len();
-    for i in 0..len {
-        let next = if i == len - 1 { 0 } else { i + 1 };
-        happiness += pairs[&(names[i], names[next])];
-        happiness += pairs[&(names[next], names[i])];
-    }
-    happiness
+fn count_happiness(names: &[&str], pairs: &HashMap<(&str, &str), i16>) -> i16 {
+    names
+        .iter()
+        .circular_tuple_windows()
+        .fold(0, |acc, (current, next)| {
+            acc + pairs[&(*current, *next)] + pairs[&(*next, *current)]
+        })
 }
 
 fn parse_input(input: &str) -> (HashMap<(&str, &str), i16>, HashSet<&str>) {
     let mut pairs = HashMap::new();
     let mut names = HashSet::new();
 
-    for line in input.lines().into_iter() {
+    for line in input.lines() {
         let parts = line.split_whitespace().collect::<Vec<_>>();
         let name = parts[0];
         let gain_or_lose = parts[2];
