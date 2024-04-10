@@ -1,3 +1,5 @@
+use std::ops::Range;
+
 use itertools::Itertools;
 
 #[derive(Debug)]
@@ -110,14 +112,27 @@ impl From<&str> for Cookie {
     }
 }
 
+fn all_combinations(range: Range<i32>, n: usize) -> Vec<Vec<i32>> {
+    itertools::repeat_n(range, n)
+        .multi_cartesian_product()
+        .filter(|c| c.iter().sum::<i32>() == 100)
+        .collect::<Vec<_>>()
+}
+
 fn main() {
     let input = include_str!("../src/input.txt");
     let cookie = Cookie::from(input);
-    let max_value = (0..101)
-        .permutations(4)
-        .filter(|comb| comb.iter().sum::<i32>() == 100)
-        .map(|combination| cookie.get_score(&combination))
+    let combinations = all_combinations(0..101, cookie.ingredients.len());
+    let max_value = combinations
+        .iter()
+        .map(|c| cookie.get_score(c))
         .max()
         .unwrap();
-    println!("{}", max_value);
+    let max_value_with_500_calories = combinations
+        .iter()
+        .filter(|c| cookie.get_calories(*c) == 500)
+        .map(|c| cookie.get_score(c))
+        .max()
+        .unwrap();
+    println!("{}\n{}", max_value, max_value_with_500_calories);
 }
