@@ -1,46 +1,28 @@
-// const CAPACITY: isize = 150;
+use std::collections::HashSet;
+
+use itertools::Itertools;
+
+const CAPACITY: usize = 150;
 
 fn main() {
-    let candidates = include_str!("../src/input.txt");
-    let mut candidates = candidates
+    let candidates: Vec<usize> = include_str!("../src/input.txt")
         .lines()
-        .map(|candidate| candidate.parse::<usize>().unwrap())
-        .collect::<Vec<_>>();
+        .map(|candidate| candidate.parse().unwrap())
+        .collect();
 
-    let mut candidates = vec![20, 15, 10, 5, 5];
-    candidates.sort();
-
-    let mut combinations: Vec<Vec<usize>> = vec![vec![]];
-    let mut current = vec![];
-    find_combinations(&mut combinations, &mut current, &candidates, 25, 0);
-    println!("{:?}", combinations)
-}
-
-fn find_combinations(
-    combinations: &mut Vec<Vec<usize>>,
-    current_combination: &mut Vec<usize>,
-    candidates: &Vec<usize>,
-    remaining_sum: isize,
-    start: usize,
-) {
-    if remaining_sum < 0 {
-        return;
-    } else if remaining_sum == 0 {
-        combinations.push(current_combination.to_vec())
-    } else {
-        for i in start..candidates.len() {
-            if i > start && candidates[i] == candidates[i - 1] {
-                continue;
-            }
-            current_combination.push(candidates[i]);
-            find_combinations(
-                combinations,
-                current_combination,
-                candidates,
-                remaining_sum - candidates[i] as isize,
-                i + 1,
-            );
-            current_combination.pop();
-        }
+    let mut all_combinations = vec![];
+    for i in 1..candidates.len() {
+        candidates
+            .clone()
+            .into_iter()
+            .combinations(i)
+            .filter(|c| c.iter().sum::<usize>() == CAPACITY)
+            .for_each(|vec| all_combinations.push(vec));
     }
+
+    println!("{}", all_combinations.len());
+    println!(
+        "{}",
+        all_combinations.iter().filter(|c| c.len() == 4).count()
+    );
 }
