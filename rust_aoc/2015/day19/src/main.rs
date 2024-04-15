@@ -22,8 +22,7 @@ impl<'a> Machine<'a> {
     }
 
     fn new(input: &'a str) -> Self {
-        let (all_repl, mut molecule) = input.split_once("\n\n").unwrap();
-        molecule = molecule.trim();
+        let (all_repl, molecule) = input.trim().split_once("\n\n").unwrap();
         let mut replacements: Vec<(&str, &str)> = vec![];
         for repl in all_repl.lines() {
             let token: Vec<&str> = repl.split_whitespace().collect();
