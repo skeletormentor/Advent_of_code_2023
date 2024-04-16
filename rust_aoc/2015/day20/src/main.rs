@@ -14,6 +14,20 @@ fn get_present_amount(num: u32) -> u32 {
     nums.into_iter().map(|num| 10 * num).sum()
 }
 
+fn deliver(most_presents: usize) -> Vec<usize> {
+    let mut houses = vec![0; most_presents / 11];
+    for elf_id in 1..houses.len() {
+        let mut presents_delivered = 0;
+        let mut house_id = elf_id;
+        while house_id < houses.len() && presents_delivered < 50 {
+            houses[house_id] += elf_id * 11;
+            house_id += elf_id;
+            presents_delivered += 1;
+        }
+    }
+    houses
+}
+
 fn main() {
     let mut presents = 0;
     let input = 33_100_000;
@@ -23,4 +37,11 @@ fn main() {
         house_number += 1;
     }
     println!("{}", house_number - 1);
+    println!(
+        "{:?}",
+        deliver(input as usize)
+            .iter()
+            .position(|x| x >= &(input as usize))
+            .unwrap()
+    );
 }
